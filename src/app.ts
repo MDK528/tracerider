@@ -1,6 +1,6 @@
 import express from "express";
 import type{ Express, NextFunction, Request, Response } from "express";
-import { ApiError } from "./common/utils/apiError";
+import { ApiError } from "./common/utils/apiError.js";
 
 const app: Express = express();
 
