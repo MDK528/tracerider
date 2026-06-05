@@ -55,7 +55,7 @@ const signinService = async ({email, password}: SiginType) => {
 
     const matchPass = await bcrypt.compare(password, user.password!)
 
-    if(!matchPass) throw ApiError.unauthorized("Inavlid email or password");
+    if(!matchPass) throw ApiError.unauthorized("Invalid email or password");
 
     const accessToken = generateAccessToken({id: user.id})
     const refreshToken = generateRefreshToken({id: user.id})
@@ -157,6 +157,7 @@ const verifyEmailService = async (token: string) =>{
     const [updatedUser] = await db
         .update(usersTable)
         .set({isEmailVerified: true, emailVerificationToken: null})
+        .where(eq(usersTable.id, user.id))
         .returning({id: usersTable.id, isVerified: usersTable.isEmailVerified})
 
     return { updatedUser }
