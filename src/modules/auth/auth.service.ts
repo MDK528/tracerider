@@ -10,6 +10,7 @@ import type { SignupType } from "./dto/signup.dto.js";
 import type { SiginType } from "./dto/signin.dto.js";
 import type { ResetPassType, EmailType} from "./dto/resetPassword.dto.js";
 import type { UpdateUserType } from "./dto/updateUser.dto.js";
+import { driverInfoTable } from "../drivers/drivers.model.js";
 
 
 const signupService = async ({fullName, email, phone, gender, role, address, avatarUrl, password}: SignupType)=>{
@@ -33,15 +34,17 @@ const signupService = async ({fullName, email, phone, gender, role, address, ava
         emailVerificationToken: hashedToken
     }).returning({id: usersTable.id})
 
-    // if(role === 'driver'){
-    //    await db.insert(providersTable).values({providerId: result!.id})
-    // }
+    if(role === "driver"){
+       await db.insert(driverInfoTable).values({id: result!.id, state: "", 
+        serviceArea: [], vehicleModel: "", vehicleNo: "", licenceNo: ""
+       })
+    }
 
     try {
         const mailResult = await sendVerificationEmail(email, rawToken)
         if(!mailResult) throw ApiError.badRequest("Failed to send verification email")
     } catch (error: unknown) {
-        console.error("Failed to sent verification email", (error as Error)?.message)
+        console.error("Failed to sent verification email: ", (error as Error)?.message)
     }
 
     return result
