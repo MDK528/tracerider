@@ -1,10 +1,12 @@
 import express from "express";
 import type{ Express, NextFunction, Request, Response } from "express";
 import { ApiError } from "./common/utils/apiError.js";
+import cookiParser from "cookie-parser";
 import authRoute from "./modules/auth/auth.route.js";
 
 const app: Express = express();
 
+app.use(cookiParser())
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
 

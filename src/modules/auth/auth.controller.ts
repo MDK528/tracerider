@@ -24,13 +24,11 @@ const signInController = async (req: Request, res: Response) => {
         httpOnly: true,
         secure: true,
         sameSite: "none",
-        domain: ".mdkhalid.site",
-        maxAge: 30 * 60 * 1000
+        maxAge: 15 * 60 * 1000
     }).cookie("refreshToken", refreshToken,{
         httpOnly: true,
         secure: true,
         sameSite: "none",
-        domain: ".mdkhalid.site",
         maxAge: 5 * 24 * 60 * 60 * 1000
     })
 
@@ -41,12 +39,10 @@ const signOutController = async (req: Request, res: Response) => {
     await signoutService(req.user.id)
 
     res.clearCookie("accessToken", {
-        domain: ".mdkhalid.site",
         sameSite: "none",
         secure: true,
     })
     res.clearCookie("refreshToken", {
-        domain: ".mdkhalid.site",
         sameSite: "none",
         secure: true,
     })
@@ -78,13 +74,11 @@ const refreshAccessTokenController = async (req: Request, res: Response) => {
         httpOnly: true,
         secure: true,
         sameSite: "none",
-        domain: ".mdkhalid.site",
-        maxAge: 30 * 60 * 1000
+        maxAge: 15 * 60 * 1000
     }).cookie("refreshToken", refreshToken,{
         httpOnly: true,
         secure: true,
         sameSite: "none",
-        domain: ".mdkhalid.site",
         maxAge: 5 * 24 * 60 * 60 * 1000
     })
 

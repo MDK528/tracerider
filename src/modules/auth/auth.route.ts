@@ -19,9 +19,9 @@ import Resetpassword, { ForgotPassword } from './dto/resetPassword.dto.js';
 
 const router:Router = Router()
 
-router.post('/sign-up', validate(Signup), signUpController)
-router.post('/sign-in', validate(Signin), signInController)
-router.post('/sign-out', authenticate, signOutController)
+router.post("/sign-up", validate(Signup), signUpController)
+router.post("/sign-in", validate(Signin), signInController)
+router.post("/sign-out", authenticate, signOutController)
 router.get("/get-me", authenticate, getMeController)
 router.post("/refresh-accesstoken", refreshAccessTokenController)
 router.post("/forgot-password", validate(ForgotPassword), forgotPasswordController)
