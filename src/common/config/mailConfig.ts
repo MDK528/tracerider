@@ -8,6 +8,7 @@ const sendEmail = async (to: string, subject: string, html: string) => {
       "api-key": process.env.BREVO_API_KEY!,
     },
     body: JSON.stringify({
+      sender: { email: process.env.BREVO_SENDER_EMAIL!, name: "TraceRider"},
       to: [{ email: to }],
       subject,
       htmlContent: html,
