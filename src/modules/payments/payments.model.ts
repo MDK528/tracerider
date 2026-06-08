@@ -1,7 +1,8 @@
 import { pgTable, uuid, varchar, integer, timestamp, pgEnum } from "drizzle-orm/pg-core"
 import { bookingTable } from "../bookings/bookings.model.js"
+import { paymentMethodEnum } from "../../common/enums/shared.enums.js"
 
-export const paymentMethodEnum = pgEnum("payment_method", ["cash", "razorpay"])
+
 export const paymentStatusEnum = pgEnum("payment_status", ["pending", "success", "failed"])
 
 export const paymentsTable = pgTable("payments", {

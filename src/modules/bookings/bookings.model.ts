@@ -1,6 +1,7 @@
-import { pgTable, uuid, varchar, timestamp, pgEnum, integer, text } from "drizzle-orm/pg-core"
+import { pgTable, uuid, varchar, timestamp, pgEnum, integer, text, real } from "drizzle-orm/pg-core"
 import { usersTable } from "../auth/auth.model.js"
 import { driverInfoTable } from "../drivers/drivers.model.js"
+import { paymentMethodEnum } from "../../common/enums/shared.enums.js"
 
 
 export const rideStatusEnum = pgEnum("ride_status", [
@@ -22,10 +23,16 @@ export const bookingTable = pgTable("booking", {
     pickupCity: varchar("pickup_city", { length: 100 }).notNull(),
     pickupLocation: text("pickup_location").notNull(),
     dropLocation: text("drop_location").notNull(),
+    pickupLat: real("pickup_lat").notNull(),
+    pickupLng: real("pickup_lng").notNull(),
+    dropLat: real("drop_lat").notNull(),
+    dropLng: real("drop_lng").notNull(),
     fareAmount: integer("fare_amount").notNull(),
+    paymentMethod: paymentMethodEnum("payment_method").notNull(),
     status: rideStatusEnum("status").default("requested").notNull(),
     otp: varchar("otp", { length: 4 }),
     cancelledBy: cancelledByEnum("cancelled_by"),
+    cancellationReason: varchar("cancellation_reason", { length: 200 }),
     confirmedAt: timestamp("confirmed_at"),
     completedAt: timestamp("completed_at"),
     cancelledAt: timestamp("cancelled_at"),
