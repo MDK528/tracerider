@@ -18,6 +18,13 @@ const signupService = async ({fullName, email, phone, gender, role, address, ava
 
     if(existingUser?.email) throw ApiError.badRequest("User with this email already exist");
 
+    const [phoneConflict] = await db
+            .select()
+            .from(usersTable)
+            .where(eq(usersTable.phone, phone))
+
+    if (phoneConflict) throw ApiError.conflict("Phone number already in use");
+
     const hashPassword = await bcrypt.hash(password, 10)
 
     const {rawToken, hashedToken} = generateResetPasswordToken()
