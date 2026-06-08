@@ -5,15 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1780692892330,
-      "tag": "0000_happy_living_lightning",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1780787098209,
-      "tag": "0001_narrow_thunderbolt",
+      "when": 1780956441834,
+      "tag": "0000_tearful_wraith",
       "breakpoints": true
     }
   ]
