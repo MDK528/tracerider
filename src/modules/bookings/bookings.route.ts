@@ -20,19 +20,16 @@ import {
 
 const router: Router = Router()
 
-// passenger
 router.post("/", authenticate, authorize("passenger"), validate(CreateBooking), createBookingController)
 router.get("/my-rides", authenticate, authorize("passenger"), getMyRidesController)
 router.post("/:id/verify-otp", authenticate, authorize("passenger"), validateParams(UUIDParams), validate(VerifyOtp), verifyOtpController)
 
-// driver
 router.get("/available", authenticate, authorize("driver"), getAvailableRequestsController)
 router.patch("/:id/accept", authenticate, authorize("driver"), validateParams(UUIDParams), acceptRideController)
 router.patch("/:id/reject", authenticate, authorize("driver"), validateParams(UUIDParams), rejectRideController)
 router.patch("/:id/arrive", authenticate, authorize("driver"), validateParams(UUIDParams), markArrivingController)
 router.patch("/:id/complete", authenticate, authorize("driver"), validateParams(UUIDParams), completeRideController)
 
-// both
 router.get("/:id", authenticate, validateParams(UUIDParams), getBookingController)
 router.patch("/:id/cancel", authenticate, validateParams(UUIDParams), validate(CancelBooking), cancelRideController)
 
