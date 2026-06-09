@@ -4,6 +4,8 @@ import { ApiError } from "./common/utils/apiError.js";
 import cookiParser from "cookie-parser";
 import cors from "cors";
 import authRoute from "./modules/auth/auth.route.js";
+import bookingRoute from "./modules/bookings/bookings.route.js";
+import driverRoute from "./modules/drivers/drivers.route.js"
 
 const app: Express = express();
 
@@ -23,6 +25,8 @@ app.get("/", (req, res)=>{
 })
 
 app.use("/api/v1/auth", authRoute)
+app.use("/api/v1/bookings", bookingRoute)
+app.use("/api/v1/drivers", driverRoute)
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
 
