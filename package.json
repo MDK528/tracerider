@@ -23,8 +23,10 @@
     "dotenv": "^17.4.2",
     "drizzle-orm": "^0.45.2",
     "express": "^5.2.1",
+    "ioredis": "^5.11.1",
     "jsonwebtoken": "^9.0.3",
     "pg": "^8.21.0",
+    "socket.io": "^4.8.3",
     "zod": "^4.4.3"
   },
   "devDependencies": {
@@ -32,6 +34,7 @@
     "@types/cookie-parser": "^1.4.10",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
+    "@types/ioredis": "^5.0.0",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^25.9.1",
     "@types/pg": "^8.20.0",
