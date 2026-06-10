@@ -5,6 +5,9 @@ import { bookingTable } from "./bookings.model.js"
 import { driverInfoTable } from "../drivers/drivers.model.js"
 import { ApiError } from "../../common/utils/apiError.js"
 import type { CreateBookingType } from "./dto/createBooking.dto.js"
+import { getIO } from "../realtime/realtime.js"
+import { getUserSocket } from "../realtime/realtime.redis.js"
+import { EVENTS } from "../realtime/realtime.events.js"
 
 
 const calculateDistance = (lat1: number, lng1: number, lat2: number, lng2: number): number => {
@@ -52,6 +55,31 @@ const createBookingService = async (passengerId: string, body: CreateBookingType
         paymentMethod,
         otp
     }).returning({ id: bookingTable.id, fareAmount: bookingTable.fareAmount })
+
+    const [availableDriver] = await db
+        .select({ id: driverInfoTable.id })
+        .from(driverInfoTable)
+        .where(
+            and(
+                eq(driverInfoTable.isAvailable, true),
+                eq(driverInfoTable.isVerified, true),
+                sql`${sql.param(pickupCity)} = ANY(${driverInfoTable.serviceArea})`
+            )
+        )
+        .limit(1)
+
+    if (availableDriver) {
+        const driverSocketId = await getUserSocket(availableDriver.id)
+        if (driverSocketId) {
+            getIO().to(driverSocketId).emit(EVENTS.NEW_RIDE_REQUEST, {
+                bookingId: booking!.id,
+                pickupCity,
+                pickupLocation,
+                dropLocation,
+                fareAmount,
+            })
+        }
+    }
 
     return booking
 }
@@ -116,6 +144,14 @@ const acceptRideService = async (bookingId: string, driverId: string) => {
 
     await db.update(driverInfoTable).set({ isAvailable: false }).where(eq(driverInfoTable.id, driverId))
 
+    const passengerSocketId = await getUserSocket(booking.passengerId)
+    if (passengerSocketId) {
+        getIO().to(passengerSocketId).emit(EVENTS.DRIVER_ASSIGNED, {
+            bookingId,
+            driverId,
+        })
+    }
+
     return updated
 }
 
@@ -144,6 +180,11 @@ const markArrivingService = async (bookingId: string, driverId: string) => {
         .where(eq(bookingTable.id, bookingId))
         .returning({ id: bookingTable.id, status: bookingTable.status })
 
+    const passengerSocketId = await getUserSocket(booking.passengerId)
+    if (passengerSocketId) {
+        getIO().to(passengerSocketId).emit(EVENTS.DRIVER_ARRIVING, { bookingId })
+    }
+
     return updated
 }
 
@@ -160,6 +201,13 @@ const verifyOtpService = async (bookingId: string, passengerId: string, otp: str
         .set({ status: "in_progress", otp: null })
         .where(eq(bookingTable.id, bookingId))
         .returning({ id: bookingTable.id, status: bookingTable.status })
+
+    if (booking.driverId) {
+        const driverSocketId = await getUserSocket(booking.driverId)
+        if (driverSocketId) {
+            getIO().to(driverSocketId).emit(EVENTS.RIDE_STARTED, { bookingId })
+        }
+    }
 
     return updated
 }
@@ -181,6 +229,15 @@ const completeRideService = async (bookingId: string, driverId: string) => {
         .update(driverInfoTable)
         .set({ isAvailable: true, totalTrips: sql`${driverInfoTable.totalTrips} + 1` })
         .where(eq(driverInfoTable.id, driverId))
+
+    const passengerSocketId = await getUserSocket(booking.passengerId)
+    if (passengerSocketId) {
+        getIO().to(passengerSocketId).emit(EVENTS.RIDE_COMPLETED, {
+            bookingId,
+            fareAmount: updated!.fareAmount,
+            paymentMethod: updated!.paymentMethod,
+        })
+    }
 
     return updated
 }
@@ -207,10 +264,24 @@ const cancelRideService = async (bookingId: string, userId: string, role: "passe
             cancelledAt: new Date()
         })
         .where(eq(bookingTable.id, bookingId))
-        .returning({ id: bookingTable.id, status: bookingTable.status });
+        .returning({ id: bookingTable.id, status: bookingTable.status })
 
     if (booking.driverId) {
         await db.update(driverInfoTable).set({ isAvailable: true }).where(eq(driverInfoTable.id, booking.driverId))
+    }
+
+    if (role === "passenger" && booking.driverId) {
+        const driverSocketId = await getUserSocket(booking.driverId)
+        if (driverSocketId) {
+            getIO().to(driverSocketId).emit(EVENTS.RIDE_CANCELLED, { bookingId })
+        }
+    }
+
+    if (role === "driver") {
+        const passengerSocketId = await getUserSocket(booking.passengerId)
+        if (passengerSocketId) {
+            getIO().to(passengerSocketId).emit(EVENTS.DRIVER_CANCELLED, { bookingId })
+        }
     }
 
     return updated
