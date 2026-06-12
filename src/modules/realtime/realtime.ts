@@ -16,9 +16,10 @@ const initIO = (httpServer: HttpServer): Server => {
     });
 
     io.use((socket, next) => {
-        console.log("Socket middleware hit");
-    console.log("query token:", socket.handshake.query.token);
-    console.log("auth token:", socket.handshake.auth.token);
+        // console.log("Socket middleware hit");
+        // console.log("query token:", socket.handshake.query.token);
+        // console.log("auth token:", socket.handshake.auth.token);
+        // console.log("headers token:", socket.handshake.headers.token);
         const token = 
             (socket.handshake.auth.token as string | undefined) ??
             (socket.handshake.query.token as string | undefined) ??
@@ -29,7 +30,7 @@ const initIO = (httpServer: HttpServer): Server => {
         try {
             const decoded = verifyAccessToken(token);
             socket.data.userId = decoded.id;
-            console.log("Socket auth success, userId:", decoded.id);
+            // console.log("Socket auth success, userId:", decoded.id);
             next();
         } catch (err) {
             console.error("Socket auth failed:", err);
@@ -38,7 +39,7 @@ const initIO = (httpServer: HttpServer): Server => {
     });
 
     io.on("connection", (socket) => {
-        console.log(`Socket connected: ${socket.id} | user: ${socket.data.userId}`);
+        // console.log(`Socket connected: ${socket.id} | user: ${socket.data.userId}`);
         registerHandlers(io, socket);
     });
 
