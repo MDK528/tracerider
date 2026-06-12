@@ -10,12 +10,13 @@ import {
     getBookingController,
     getMyRidesController,
     getAvailableRequestsController,
+    getMyActiveRideController,
     acceptRideController,
     rejectRideController,
     markArrivingController,
     verifyOtpController,
     completeRideController,
-    cancelRideController
+    cancelRideController,
 } from "./bookings.controller.js"
 
 const router: Router = Router()
@@ -25,6 +26,7 @@ router.get("/my-rides", authenticate, authorize("passenger"), getMyRidesControll
 router.post("/:id/verify-otp", authenticate, authorize("passenger"), validateParams(UUIDParams), validate(VerifyOtp), verifyOtpController)
 
 router.get("/available", authenticate, authorize("driver"), getAvailableRequestsController)
+router.get("/my-active-ride", authenticate, authorize("driver"), getMyActiveRideController)
 router.patch("/:id/accept", authenticate, authorize("driver"), validateParams(UUIDParams), acceptRideController)
 router.patch("/:id/reject", authenticate, authorize("driver"), validateParams(UUIDParams), rejectRideController)
 router.patch("/:id/arrive", authenticate, authorize("driver"), validateParams(UUIDParams), markArrivingController)

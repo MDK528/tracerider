@@ -1,5 +1,5 @@
 import crypto from "node:crypto"
-import { eq, and, sql } from "drizzle-orm"
+import { eq, and, sql, inArray } from "drizzle-orm"
 import { db } from "../../common/config/db.js"
 import { bookingTable } from "./bookings.model.js"
 import { driverInfoTable } from "../drivers/drivers.model.js"
@@ -119,6 +119,20 @@ const getAvailableRequestsService = async (driverId: string) => {
         )
 
     return rides
+}
+
+const getMyActiveRideService = async (driverId: string) => {
+    const [booking] = await db
+        .select()
+        .from(bookingTable)
+        .where(
+            and(
+                eq(bookingTable.driverId, driverId),
+                inArray(bookingTable.status, ["driver_assigned", "driver_arriving", "in_progress"])
+            )
+        )
+
+    return booking ?? null
 }
 
 const acceptRideService = async (bookingId: string, driverId: string) => {
@@ -292,6 +306,7 @@ export {
     getBookingService,
     getMyRidesService,
     getAvailableRequestsService,
+    getMyActiveRideService,
     acceptRideService,
     rejectRideService,
     markArrivingService,

@@ -5,12 +5,13 @@ import {
     getBookingService,
     getMyRidesService,
     getAvailableRequestsService,
+    getMyActiveRideService,
     acceptRideService,
     rejectRideService,
     markArrivingService,
     verifyOtpService,
     completeRideService,
-    cancelRideService
+    cancelRideService,
 } from "./bookings.service.js"
 
 const createBookingController = async (req: Request, res: Response) => {
@@ -32,6 +33,11 @@ const getMyRidesController = async (req: Request, res: Response) => {
 const getAvailableRequestsController = async (req: Request, res: Response) => {
     const rides = await getAvailableRequestsService(req.user.id)
     ApiResponse.ok(res, "Available ride requests fetched", rides)
+}
+
+const getMyActiveRideController = async (req: Request, res: Response) => {
+    const booking = await getMyActiveRideService(req.user.id)
+    ApiResponse.ok(res, booking ? "Active ride fetched successfully" : "No active ride", booking)
 }
 
 const acceptRideController = async (req: Request, res: Response) => {
@@ -80,6 +86,7 @@ export {
     getBookingController,
     getMyRidesController,
     getAvailableRequestsController,
+    getMyActiveRideController,
     acceptRideController,
     rejectRideController,
     markArrivingController,
