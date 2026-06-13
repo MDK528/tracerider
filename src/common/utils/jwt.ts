@@ -5,6 +5,12 @@ interface UserToken{
     id: string
 }
 
+interface ShareTokenPayload {
+    bookingId: string
+    type: "share"
+}
+
+
 const generateAccessToken = (payload: UserToken): string => {
     return jwt.sign(
         payload, 
@@ -42,4 +48,22 @@ const generateResetPasswordToken = () => {
   return { rawToken, hashedToken };
 };
 
-export { generateAccessToken, generateRefreshToken, verifyAccessToken, verifyRefreshToken, generateResetPasswordToken }
+const generateShareToken = (bookingId: string): string => {
+    return jwt.sign(
+        { bookingId, type: "share" } satisfies ShareTokenPayload,
+        process.env.ACCESS_TOKEN_SECRET!,
+        { expiresIn: "24h" }
+    )
+}
+
+const verifyShareToken = (token: string): { bookingId: string } => {
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET!) as ShareTokenPayload
+
+    if (decoded.type !== "share" || !decoded.bookingId) {
+        throw new Error("Invalid tracking token")
+    }
+
+    return { bookingId: decoded.bookingId }
+}
+
+export { generateAccessToken, generateRefreshToken, verifyAccessToken, verifyRefreshToken, generateResetPasswordToken, generateShareToken, verifyShareToken }
