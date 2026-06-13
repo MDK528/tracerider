@@ -9,6 +9,7 @@ import type { CreateBookingType } from "./dto/createBooking.dto.js"
 import { getIO } from "../realtime/realtime.js"
 import { getUserSocket } from "../realtime/realtime.redis.js"
 import { EVENTS } from "../realtime/realtime.events.js"
+import { paymentsTable } from "../payments/payments.model.js"
 
 
 const calculateDistance = (lat1: number, lng1: number, lat2: number, lng2: number): number => {
@@ -56,6 +57,13 @@ const createBookingService = async (passengerId: string, body: CreateBookingType
         paymentMethod,
         otp
     }).returning({ id: bookingTable.id, fareAmount: bookingTable.fareAmount })
+
+    await db.insert(paymentsTable).values({
+        bookingId: booking!.id,
+        method: paymentMethod,
+        amount: fareAmount,
+        status: "pending",
+    })
 
     const [availableDriver] = await db
         .select({ id: driverInfoTable.id })
@@ -239,6 +247,18 @@ const completeRideService = async (bookingId: string, driverId: string) => {
         .set({ status: "completed", completedAt: new Date() })
         .where(eq(bookingTable.id, bookingId))
         .returning({ id: bookingTable.id, status: bookingTable.status, fareAmount: bookingTable.fareAmount, paymentMethod: bookingTable.paymentMethod })
+
+    const [payment] = await db
+        .select()
+        .from(paymentsTable)
+        .where(eq(paymentsTable.bookingId, bookingId))
+
+    if (payment?.method === "cash") {
+        await db
+            .update(paymentsTable)
+            .set({ status: "success" })
+            .where(eq(paymentsTable.id, payment.id))
+    }
 
     await db
         .update(driverInfoTable)

@@ -1,7 +1,7 @@
 import { Router } from "express"
 import { authenticate, authorize } from "../auth/auth.middleware.js"
 import { validate, validateParams } from "../../common/middleware/validate.middleware.js"
-import UUIDParams from "../../common/dto/uuidParams.dto.js"
+import { UUIDParams } from "../../common/dto/uuidParams.dto.js"
 import CreateBooking from "./dto/createBooking.dto.js"
 import VerifyOtp from "./dto/verifyOtp.dto.js"
 import CancelBooking from "./dto/cancelBooking.dto.js"
