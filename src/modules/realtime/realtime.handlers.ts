@@ -10,6 +10,7 @@ import {
     deleteUserSocket,
     getUserSocket,
 } from "./realtime.redis.js";
+import {getTrackNamespace} from "./realtime.js"
 import { driverInfoTable } from "../drivers/drivers.model.js";
 import { bookingTable } from "../bookings/bookings.model.js";
 
@@ -54,21 +55,24 @@ const registerHandlers = (io: Server, socket: Socket): void => {
     socket.on(EVENTS.DRIVER_LOCATION_UPDATE, async (payload: { lat: number; lng: number; rideId?: string }) => {
         try {
             const { lat, lng, rideId } = payload;
-
+     
             await setDriverLocation(userId, lat, lng);
-
+     
             // If driver is on an active ride, forward location to passenger
             if (rideId) {
                 const passengerSocketId = await getPassengerSocketForRide(rideId, userId);
                 if (passengerSocketId) {
                     io.to(passengerSocketId).emit(EVENTS.DRIVER_LOCATION, { lat, lng });
                 }
+     
+                // Also broadcast to anyone watching via a public share link
+                getTrackNamespace().to(`track:${rideId}`).emit(EVENTS.DRIVER_LOCATION, { lat, lng });
             }
         } catch (err) {
             console.error("DRIVER_LOCATION_UPDATE error:", err);
         }
     });
-
+    
     // ─── Driver: Accept Ride ──────────────────────────────────────────
     socket.on(EVENTS.DRIVER_ACCEPT_RIDE, async (payload: { rideId: string }) => {
         try {
