@@ -24,8 +24,8 @@ const router: Router = Router()
 
 router.post("/", authenticate, authorize("passenger"), validate(CreateBooking), createBookingController)
 router.get("/my-rides", authenticate, authorize("passenger"), getMyRidesController)
-router.post("/:id/verify-otp", authenticate, authorize("passenger"), validateParams(UUIDParams), validate(VerifyOtp), verifyOtpController)
 
+router.post("/:id/verify-otp", authenticate, authorize("driver"), validateParams(UUIDParams), validate(VerifyOtp), verifyOtpController)
 router.get("/available", authenticate, authorize("driver"), getAvailableRequestsController)
 router.get("/my-active-ride", authenticate, authorize("driver"), getMyActiveRideController)
 router.patch("/:id/accept", authenticate, authorize("driver"), validateParams(UUIDParams), acceptRideController)

@@ -211,11 +211,11 @@ const markArrivingService = async (bookingId: string, driverId: string) => {
     return updated
 }
 
-const verifyOtpService = async (bookingId: string, passengerId: string, otp: string) => {
+const verifyOtpService = async (bookingId: string, driverId: string, otp: string) => {
     const [booking] = await db.select().from(bookingTable).where(eq(bookingTable.id, bookingId))
 
     if (!booking?.id) throw ApiError.notfound("Booking not found");
-    if (booking.passengerId !== passengerId) throw ApiError.forbidden("Not your ride");
+    if (booking.driverId !== driverId) throw ApiError.forbidden("Not your ride");
     if (booking.status !== "driver_arriving") throw ApiError.badRequest("Driver has not arrived yet");
     if (booking.otp !== otp) throw ApiError.badRequest("Invalid OTP");
 
