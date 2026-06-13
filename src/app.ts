@@ -7,6 +7,7 @@ import authRoute from "./modules/auth/auth.route.js";
 import bookingRoute from "./modules/bookings/bookings.route.js";
 import driverRoute from "./modules/drivers/drivers.route.js"
 import trackingRoute from "./modules/tracking/tracking.route.js"
+import paymentsRoute from "./modules/payments/payments.route.js"
 import { getTrackingPageHtml } from "./modules/tracking/trackingPage.js"
 
 
@@ -32,7 +33,8 @@ app.use("/api/v1/auth", authRoute)
 app.use("/api/v1/bookings", bookingRoute)
 app.use("/api/v1/drivers", driverRoute)
 app.use("/api/v1/tracking", trackingRoute)
- 
+app.use("/api/v1/payments", paymentsRoute)
+
 app.get("/track/:token", (req, res) => {
     res.type("html").send(getTrackingPageHtml(String(req.params.token)))
 })
