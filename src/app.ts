@@ -6,6 +6,9 @@ import cors from "cors";
 import authRoute from "./modules/auth/auth.route.js";
 import bookingRoute from "./modules/bookings/bookings.route.js";
 import driverRoute from "./modules/drivers/drivers.route.js"
+import trackingRoute from "./modules/tracking/tracking.route.js"
+import { getTrackingPageHtml } from "./modules/tracking/trackingPage.js"
+
 
 const app: Express = express();
 
@@ -13,8 +16,8 @@ app.use(cookiParser())
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
 app.use(cors({
-    // origin: process.env.CLIENT_URL,
-    origin : "*",
+    origin: process.env.CLIENT_URL,
+    // origin : "*",
     credentials: true
 }))
 
@@ -28,6 +31,12 @@ app.get("/", (req, res)=>{
 app.use("/api/v1/auth", authRoute)
 app.use("/api/v1/bookings", bookingRoute)
 app.use("/api/v1/drivers", driverRoute)
+app.use("/api/v1/tracking", trackingRoute)
+ 
+app.get("/track/:token", (req, res) => {
+    res.type("html").send(getTrackingPageHtml(String(req.params.token)))
+})
+ 
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
 
