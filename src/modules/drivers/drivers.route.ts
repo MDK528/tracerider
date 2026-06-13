@@ -2,7 +2,7 @@ import { Router } from "express"
 import { authenticate, authorize } from "../auth/auth.middleware.js"
 import { validate, validateParams } from "../../common/middleware/validate.middleware.js"
 import { UpdateDriverProfile, ToggleAvailability } from "./dto/drivers.dto.js"
-import UUIDParams from "../../common/dto/uuidParams.dto.js"
+import { UUIDParams } from "../../common/dto/uuidParams.dto.js"
 import {
     getDriverProfileController,
     updateDriverProfileController,
