@@ -17,6 +17,7 @@ import {
     verifyOtpController,
     completeRideController,
     cancelRideController,
+    getShareTokenController,
 } from "./bookings.controller.js"
 
 const router: Router = Router()
@@ -34,5 +35,6 @@ router.patch("/:id/complete", authenticate, authorize("driver"), validateParams(
 
 router.get("/:id", authenticate, validateParams(UUIDParams), getBookingController)
 router.patch("/:id/cancel", authenticate, validateParams(UUIDParams), validate(CancelBooking), cancelRideController)
+router.get("/:id/share-token", authenticate, validateParams(UUIDParams), getShareTokenController)
 
 export default router

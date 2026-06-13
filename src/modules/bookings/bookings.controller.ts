@@ -12,6 +12,7 @@ import {
     verifyOtpService,
     completeRideService,
     cancelRideService,
+    getShareTokenService,
 } from "./bookings.service.js"
 
 const createBookingController = async (req: Request, res: Response) => {
@@ -81,6 +82,12 @@ const cancelRideController = async (req: Request, res: Response) => {
     ApiResponse.ok(res, "Ride cancelled successfully", booking)
 }
 
+const getShareTokenController = async (req: Request, res: Response) => {
+    const bookingId = String(req.params.id)
+    const result = await getShareTokenService(bookingId, req.user.id)
+    ApiResponse.ok(res, "Share token generated", result)
+}
+
 export {
     createBookingController,
     getBookingController,
@@ -92,5 +99,6 @@ export {
     markArrivingController,
     verifyOtpController,
     completeRideController,
-    cancelRideController
+    cancelRideController,
+    getShareTokenController
 }

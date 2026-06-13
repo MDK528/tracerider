@@ -1,6 +1,7 @@
 import crypto from "node:crypto"
 import { eq, and, sql, inArray } from "drizzle-orm"
 import { db } from "../../common/config/db.js"
+import { generateShareToken } from "../../common/utils/jwt.js"
 import { bookingTable } from "./bookings.model.js"
 import { driverInfoTable } from "../drivers/drivers.model.js"
 import { ApiError } from "../../common/utils/apiError.js"
@@ -301,6 +302,23 @@ const cancelRideService = async (bookingId: string, userId: string, role: "passe
     return updated
 }
 
+
+const getShareTokenService = async (bookingId: string, userId: string) => {
+    const [booking] = await db
+        .select({ id: bookingTable.id, passengerId: bookingTable.passengerId, driverId: bookingTable.driverId })
+        .from(bookingTable)
+        .where(eq(bookingTable.id, bookingId))
+ 
+    if (!booking?.id) throw ApiError.notfound("Booking not found")
+ 
+    if (booking.passengerId !== userId && booking.driverId !== userId) {
+        throw ApiError.forbidden("You do not have access to this booking")
+    }
+ 
+    const token = generateShareToken(booking.id)
+    return { token }
+}
+
 export {
     createBookingService,
     getBookingService,
@@ -312,5 +330,6 @@ export {
     markArrivingService,
     verifyOtpService,
     completeRideService,
-    cancelRideService
+    cancelRideService,
+    getShareTokenService
 }
