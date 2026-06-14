@@ -18,12 +18,14 @@ import {
     completeRideController,
     cancelRideController,
     getShareTokenController,
+    getPassengerActiveRideController,
 } from "./bookings.controller.js"
 
 const router: Router = Router()
 
 router.post("/", authenticate, authorize("passenger"), validate(CreateBooking), createBookingController)
 router.get("/my-rides", authenticate, authorize("passenger"), getMyRidesController)
+router.get("/passenger/active-ride", authenticate, authorize("passenger"), getPassengerActiveRideController)
 
 router.post("/:id/verify-otp", authenticate, authorize("driver"), validateParams(UUIDParams), validate(VerifyOtp), verifyOtpController)
 router.get("/available", authenticate, authorize("driver"), getAvailableRequestsController)

@@ -13,6 +13,7 @@ import {
     completeRideService,
     cancelRideService,
     getShareTokenService,
+    getPassengerActiveRideService,
 } from "./bookings.service.js"
 
 const createBookingController = async (req: Request, res: Response) => {
@@ -39,6 +40,11 @@ const getAvailableRequestsController = async (req: Request, res: Response) => {
 const getMyActiveRideController = async (req: Request, res: Response) => {
     const booking = await getMyActiveRideService(req.user.id)
     ApiResponse.ok(res, booking ? "Active ride fetched successfully" : "No active ride", booking)
+}
+
+const getPassengerActiveRideController = async (req: Request, res: Response) => {
+    const booking = await getPassengerActiveRideService(req.user.id)
+    ApiResponse.ok(res, booking ? "Active ride fetched" : "No active ride", booking)
 }
 
 const acceptRideController = async (req: Request, res: Response) => {
@@ -100,5 +106,6 @@ export {
     verifyOtpController,
     completeRideController,
     cancelRideController,
-    getShareTokenController
+    getShareTokenController,
+    getPassengerActiveRideController
 }

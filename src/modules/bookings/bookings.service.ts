@@ -110,6 +110,20 @@ const getMyRidesService = async (passengerId: string) => {
     return rides
 }
 
+const getPassengerActiveRideService = async (passengerId: string) => {
+    const [booking] = await db
+        .select()
+        .from(bookingTable)
+        .where(
+            and(
+                eq(bookingTable.passengerId, passengerId),
+                inArray(bookingTable.status, ["requested", "driver_assigned", "driver_arriving", "otp_verified", "in_progress"])
+            )
+        )
+
+    return booking ?? null
+}
+
 const getAvailableRequestsService = async (driverId: string) => {
     const [driver] = await db.select().from(driverInfoTable).where(eq(driverInfoTable.id, driverId))
 
@@ -343,6 +357,7 @@ export {
     createBookingService,
     getBookingService,
     getMyRidesService,
+    getPassengerActiveRideService,
     getAvailableRequestsService,
     getMyActiveRideService,
     acceptRideService,
