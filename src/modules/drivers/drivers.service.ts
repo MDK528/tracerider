@@ -109,6 +109,7 @@ const getPublicDriverProfileService = async (driverId: string) => {
             vehicleNo: driverInfoTable.vehicleNo,
             fullName: usersTable.fullName,
             avatarUrl: usersTable.avatarUrl,
+            phone: usersTable.phone
         })
         .from(driverInfoTable)
         .innerJoin(usersTable, eq(driverInfoTable.id, usersTable.id))
