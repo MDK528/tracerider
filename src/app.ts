@@ -25,7 +25,8 @@ app.use(cors({
 app.get("/", (req, res)=>{
     res.json({
         success: true,
-        message: "healthy"
+        message: "healthy",
+        version: "1.0.0"
     })
 })
 
