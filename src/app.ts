@@ -26,7 +26,7 @@ app.get("/", (req, res)=>{
     res.json({
         success: true,
         message: "healthy",
-        version: "1.0.1"
+        version: "1.0.2"
     })
 })
 

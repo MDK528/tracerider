@@ -1,4 +1,4 @@
-name: Deploy Nodejs code on ExCloud
+name: Deploy TraceRider
 
 on:
   push:
@@ -13,7 +13,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Deploy on ExCloud
+      - name: Deploy TraceRider on ExCloud
         uses: appleboy/ssh-action@v1.0.3
         with: 
           host: 210.79.129.171
