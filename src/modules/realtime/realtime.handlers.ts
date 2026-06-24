@@ -167,17 +167,16 @@ const registerHandlers = (io: Server, socket: Socket): void => {
     });
 
     // ─── Chat ─────────────────────────────────────────────────────────
-    socket.on(EVENTS.CHAT_MESSAGE, (payload: { rideId: string; message: string }) => {
+    socket.on(EVENTS.CHAT_SEND, (payload: { rideId: string; message: string }) => {
         const { rideId, message } = payload;
-
-        // Broadcast to the other party in the ride room (excluding sender)
-        socket.to(`ride:${rideId}`).emit(EVENTS.CHAT_MESSAGE, {
-            from: userId,
-            message,
-            timestamp: Date.now(),
+        if (!message?.trim() || !rideId) return;
+    
+        io.to(`ride:${rideId}`).emit(EVENTS.CHAT_RECEIVE, {
+            senderId: userId,
+            message: message.trim(),
+            timestamp: new Date().toISOString(),
         });
     });
-
     // ─── Disconnect ───────────────────────────────────────────────────
     socket.on("disconnect", async () => {
         try {

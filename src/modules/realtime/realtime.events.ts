@@ -24,8 +24,8 @@ export const EVENTS = {
     DRIVER_CANCELLED:       "server:driver_cancelled",
 
     // Chat (bidirectional)
-    CHAT_MESSAGE:           "chat:message",
-    CHAT_HISTORY:           "chat:history",
+    CHAT_SEND:    "chat:send",
+    CHAT_RECEIVE: "chat:receive",
 
 } as const;
 
