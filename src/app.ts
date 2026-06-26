@@ -30,6 +30,12 @@ app.get("/", (req, res)=>{
     })
 })
 
+
+app.use((req, res, next) => {
+  console.log("REQUEST:", req.method, req.originalUrl);
+  next();
+});
+
 app.use("/api/v1/auth", authRoute)
 app.use("/api/v1/bookings", bookingRoute)
 app.use("/api/v1/drivers", driverRoute)
@@ -39,7 +45,7 @@ app.use("/api/v1/payments", paymentsRoute)
 app.get("/track/:token", (req, res) => {
     res.type("html").send(getTrackingPageHtml(String(req.params.token)))
 })
- 
+
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
 
