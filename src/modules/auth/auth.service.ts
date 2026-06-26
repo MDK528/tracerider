@@ -71,10 +71,7 @@ const signinService = async ({email, password}: SiginType) => {
     const refreshToken = generateRefreshToken({id: user.id})
 
     await db.update(usersTable).set({refreshToken}).where(eq(usersTable.id, user.id))
-
-    console.log("logging in");
-    
-    
+        
     return {user, accessToken, refreshToken}
 }
 
