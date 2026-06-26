@@ -18,7 +18,6 @@ app.use(express.json())
 app.use(express.urlencoded({extended: true}))
 app.use(cors({
     origin: process.env.CLIENT_URL,
-    // origin : "*",
     credentials: true
 }))
 
@@ -29,7 +28,6 @@ app.get("/", (req, res)=>{
         version: "1.0.2"
     })
 })
-
 
 app.use((req, res, next) => {
   console.log("REQUEST:", req.method, req.originalUrl);
